@@ -1,27 +1,25 @@
-const fs = require("fs")
-const zlib = require("zlib")
+const http = require("http")
 
-const readStream = fs.createReadStream("./docs/text.txt")
-const writeSteam = fs.createWriteStream("./docs/new-text.txt")
-const compressStream = zlib.createGzip()
+const PORT = 3000
 
-// readStream.on("data", (chunk) => {
-// 	writeSteam.write("\n---CHUNK START---\n")
-// 	writeSteam.write(chunk)
-// 	writeSteam.write("\n---CHUNK END---\n")
-// })
+const server = http.createServer((req, res) => {
+	console.log("Server request")
+	console.log(req.url, req.method)
 
-// readStream.pipe(writeSteam)
+	// res.setHeader("Content-Type", "text/html")
+	// res.write("<head><link rel='stylesheet' href='#'></head>")
+	// res.write("<h1>Hello world!</h1>")
+	// res.write("<p>My name is Dmitry</p>")
+	// res.end()
 
-const handleError = () => {
-	console.log("Error")
-	readStream.destroy()
-	writeSteam.end("Finished with error...")
-}
+	res.setHeader("Content-Type", "application/json")
+	const data = JSON.stringify([
+		{ name: "Tommy", age: 35 },
+		{ name: "Arthur", age: 40 },
+	])
+	res.end(data)
+})
 
-readStream
-	.on("error", handleError)
-	.pipe(compressStream)
-	.pipe(writeSteam)
-	.on("error", handleError)
-
+server.listen(PORT, "localhost", (error) => {
+	error ? console.log(error) : console.log(`listening post ${PORT}`)
+})
