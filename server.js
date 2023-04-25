@@ -3,10 +3,12 @@ const path = require("path")
 
 const app = express()
 
+app.set("view engine", "ejs")
+
 const PORT = 3000
 
 const createPath = (page) => {
-	return path.resolve(__dirname, "views", `${page}.html`)
+	return path.resolve(__dirname, "ejs-views", `${page}.ejs`)
 }
 
 app.listen(PORT, (error) => {
@@ -14,19 +16,38 @@ app.listen(PORT, (error) => {
 })
 
 app.get("/", (req, res) => {
-	res.sendFile(createPath("index"))
+	const title = "Home"
+	res.render(createPath("index"), { title })
 })
 
 app.get("/contacts", (req, res) => {
-	res.sendFile(createPath("contacts"))
+	const title = "Contacts"
+	const contacts = [
+		{ name: "YouTube", link: "https://youtube.com" },
+		{ name: "Twitter", link: "https://twitter.com" },
+		{ name: "GitHub", link: "https://github.com" },
+	]
+	res.render(createPath("contacts"), { title, contacts })
 })
 
-app.get("/about-us", (req, res) => {
-	res.redirect("/contacts")
+app.get("/posts/:id", (req, res) => {
+	const title = "Post"
+	res.render(createPath("post"), { title })
+})
+
+app.get("/posts", (req, res) => {
+	const title = "Posts"
+	res.render(createPath("posts"), { title })
+})
+
+app.get("/add-post", (req, res) => {
+	const title = "Add post"
+	res.render(createPath("add-post"), { title })
 })
 
 app.use((req, res) => {
+	const title = "Error"
 	res
 		.status(404)
-		.sendFile(createPath("error"))
+		.render(createPath("error"), { title })
 })
