@@ -18,11 +18,13 @@
   },
   "homepage": "https://github.com/dimitr0960/nodejs#readme",
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "prettier": "2.8.8"
   },
   "dependencies": {
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "method-override": "^3.0.0",
     "mongoose": "^7.0.5",
     "morgan": "^1.10.0"
   }
