@@ -3,6 +3,7 @@ const path = require("path")
 const morgan = require("morgan")
 const mongoose = require("mongoose")
 const Post = require("./models/post")
+const Contact = require("./models/contact")
 
 const app = express()
 
@@ -37,36 +38,55 @@ app.get("/", (req, res) => {
 
 app.get("/contacts", (req, res) => {
 	const title = "Contacts"
-	const contacts = [
-		{ name: "YouTube", link: "https://youtube.com" },
-		{ name: "Twitter", link: "https://twitter.com" },
-		{ name: "GitHub", link: "https://github.com" },
-	]
-	res.render(createPath("contacts"), { title, contacts })
+	// const contacts = [
+	// 	{ name: "YouTube", link: "https://youtube.com" },
+	// 	{ name: "Twitter", link: "https://twitter.com" },
+	// 	{ name: "GitHub", link: "https://github.com" },
+	// ]
+	Contact
+		.find()
+		.then((contacts) => res.render(createPath("contacts"), { title, contacts }))
+		.catch((error) => {
+			console.log(error)
+			res.render(createPath("error"), { title: "ERROR" })
+		})
 })
 
 app.get("/posts/:id", (req, res) => {
 	const title = "Post"
-	const post = {
-		id: "1",
-		text: "Lorem ipsum",
-		title: "Post title",
-		date: "25.04.2023",
-		author: "Dmitry",
-	}
-	res.render(createPath("post"), { title, post })
+	// const post = {
+	// 	id: "1",
+	// 	text: "Lorem ipsum",
+	// 	title: "Post title",
+	// 	date: "25.04.2023",
+	// 	author: "Dmitry",
+	// }
+	Post
+		.findById(req.params.id)
+		.then((post) => res.render(createPath("post"), { title, post }))
+		.catch((error) => {
+			console.log(error)
+			res.render(createPath("error"), { title: "ERROR" })
+		})
 })
 
 app.get("/posts", (req, res) => {
 	const title = "Posts"
-	const posts = [{
-		id: "1",
-		text: "Lorem ipsum",
-		title: "Post title",
-		date: "25.04.2023",
-		author: "Dmitry",
-	}]
-	res.render(createPath("posts"), { title, posts })
+	// const posts = [{
+	// 	id: "1",
+	// 	text: "Lorem ipsum",
+	// 	title: "Post title",
+	// 	date: "25.04.2023",
+	// 	author: "Dmitry",
+	// }]
+	Post
+		.find()
+		.sort({ createdAt: -1 })
+		.then((posts) => res.render(createPath("posts"), { title, posts }))
+		.catch((error) => {
+			console.log(error)
+			res.render(createPath("error"), { title: "ERROR" })
+		})
 })
 
 app.post("/add-post", (req, res) => {
@@ -74,7 +94,7 @@ app.post("/add-post", (req, res) => {
 	const post = new Post({ title, author, text })
 	post
 		.save()
-		.then((result) => res.send(result))
+		.then((result) => res.redirect("/posts"))
 		.catch((error) => {
 			console.log(error)
 			res.render(createPath("error"), { title: "ERROR" })
